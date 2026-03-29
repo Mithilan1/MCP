@@ -1,0 +1,19 @@
+model = "gpt-5.4"
+model_reasoning_effort = "xhigh"
+
+[windows]
+sandbox = "elevated"
+
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
+http_headers = { "CONTEXT7_API_KEY" = "YOUR_API_KEY" }
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@latest", "--headless"]
+startup_timeout_ms = 20_000
+
+[mcp_servers.notebooklm]
+command = "npx"
+args = ["notebooklm-mcp@latest"]
+startup_timeout_ms = 20_000

@@ -1,0 +1,22 @@
+# Assignment Checklist
+
+## Project deliverables in this repo
+
+- small working project
+- tests
+- PRD
+- issue drafts
+- architecture review
+- Codex MCP config example
+- VS Code MCP config
+- Codex and VS Code install helper script
+
+## Still required outside this local folder
+
+- push this code to the separate GitHub repository
+- create real GitHub Issues from [docs/issues.md](docs/issues.md)
+- show the required skills in Codex and Claude Code
+- install Node.js so NotebookLM and Playwright can run live
+- configure and demonstrate Context7, NotebookLM, and Playwright in Codex, Claude Code, and VS Code
+- record the video walkthrough with audio
+- submit the GitHub repository URL
