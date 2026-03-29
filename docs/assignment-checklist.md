@@ -12,14 +12,16 @@
 - issue drafts
 - architecture review
 - Codex MCP config example
+- Claude project MCP config
 - VS Code MCP config
-- Codex and VS Code install helper script
+- Claude skills and setup notes
+- Windows MCP install helper script
 
 ## Still required outside this local folder
 
 - create real GitHub Issues from [docs/issues.md](docs/issues.md)
 - show the required skills in Codex and Claude Code
 - install Node.js so NotebookLM and Playwright can run live
-- configure and demonstrate Context7, NotebookLM, and Playwright in Codex, Claude Code, and VS Code
+- configure and demonstrate Context7, NotebookLM, and Playwright in Codex, Claude Code, and VS Code against HabitFlow
 - record the video walkthrough with audio
 - submit the GitHub repository URL

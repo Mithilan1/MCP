@@ -1,31 +1,24 @@
-$requiredSkills = @(
-    "grill-me",
-    "write-a-prd",
-    "prd-to-issues",
-    "tdd",
-    "improve-codebase-architecture"
-)
-
-$codexSkillsRoot = Join-Path $HOME ".codex\skills"
+$repoRoot = Split-Path $PSScriptRoot -Parent
+$projectSkillsRoot = Join-Path $repoRoot ".claude\skills"
 $claudeSkillsRoot = Join-Path $HOME ".claude\skills"
+
+if (-not (Test-Path $projectSkillsRoot)) {
+    throw "Project Claude skills were not found at $projectSkillsRoot"
+}
 
 New-Item -ItemType Directory -Path $claudeSkillsRoot -Force | Out-Null
 
-foreach ($skill in $requiredSkills) {
-    $source = Join-Path $codexSkillsRoot $skill
-    $destination = Join-Path $claudeSkillsRoot $skill
-
-    if (-not (Test-Path $source)) {
-        Write-Warning "Skipping $skill because it was not found in $codexSkillsRoot"
-        continue
-    }
+Get-ChildItem -LiteralPath $projectSkillsRoot -Directory | ForEach-Object {
+    $source = $_.FullName
+    $destination = Join-Path $claudeSkillsRoot $_.Name
 
     if (Test-Path $destination) {
         Remove-Item -LiteralPath $destination -Recurse -Force
     }
 
     Copy-Item -LiteralPath $source -Destination $destination -Recurse -Force
-    Write-Host "Installed $skill to $destination"
+    Write-Host "Installed $($_.Name) to $destination"
 }
 
-Write-Host "Claude Code skills copied. Restart Claude Code if it is already open."
+Write-Host "Claude Code skills copied from the project .claude/skills folder."
+Write-Host "Restart Claude Code if it is already open."

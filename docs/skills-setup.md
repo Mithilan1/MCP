@@ -1,14 +1,14 @@
 # Skills Setup Notes
 
-## Current status on 2026-03-25
+## Current status on 2026-03-29
 
-- The five required Matt Pocock skills are installed in Codex at `C:\Users\JT\.codex\skills\`.
-- The repo now also includes the same five skills under `.claude/skills/` as project-scoped Claude Code skills.
-- Claude Code is not installed on this machine yet, so I could not verify them live in Claude Code.
+- The five required skills are already present in this repo under `.claude/skills/`.
+- Codex also has the same five skills available locally.
+- Claude Code can use the project-scoped `.claude/skills/` folder as soon as this repo is opened there.
 
-## Codex status
+## Canonical skill source in this repo
 
-Installed skills:
+Treat the project `.claude/skills/` directory as the source of truth for the Claude side of the assignment:
 
 - `grill-me`
 - `write-a-prd`
@@ -16,43 +16,47 @@ Installed skills:
 - `tdd`
 - `improve-codebase-architecture`
 
-After installation, restart Codex so the new skills are picked up cleanly.
-
 ## Claude Code path rules
 
-Anthropic documents these locations:
+Claude supports both of these paths:
 
-- personal skills: `~/.claude/skills/<skill-name>/SKILL.md`
-- project skills: `.claude/skills/<skill-name>/SKILL.md`
+- user scope: `~/.claude/skills/<skill-name>/SKILL.md`
+- project scope: `.claude/skills/<skill-name>/SKILL.md`
 
-That means you have two valid ways to show Claude Code skills:
+That means you have two valid ways to show Claude skills:
 
-- open this repo in Claude Code and show the project-scoped `.claude/skills/` folder
-- copy the same skills into `~/.claude/skills/` for a user-scoped setup
+- open this HabitFlow repo in Claude Code and use the project-scoped `.claude/skills/` folder
+- copy the same local project skills into `~/.claude/skills/` for a user-scoped setup
 
-## Ready-to-use copy helper
+## Ready-to-use copy helpers
 
-This repo includes [scripts/install_claude_skills.ps1](../scripts/install_claude_skills.ps1), which copies the five required skill folders from your Codex skills directory into `~/.claude/skills/`.
-
-Use it after Claude Code is installed:
+Windows:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\install_claude_skills.ps1
 ```
 
+macOS/Linux:
+
+```bash
+bash ./.claude/install-skills.sh
+```
+
+Both helpers copy the local project `.claude/skills/` folder into `~/.claude/skills/`.
+
 ## What to show in your video
 
-- the `C:\Users\JT\.codex\skills\` folder with the five required skills
 - the project `.claude/skills/` folder in this repo
-- optionally the Claude user skills folder after copying
-- your chat history for each skill call in the required order
+- optionally the user-scoped `~/.claude/skills/` folder after copying
+- the Codex skills list if you want to show the same workflow in Codex too
+- your chat history for each required skill call in the required order
 
 ## Suggested prompts for the required skill order
 
 ### `grill-me`
 
 ```text
-Use grill-me on this project idea: HabitFlow, a tiny Python-only habit tracker for Assignment 4. Push back on anything too large or unclear.
+Use grill-me on HabitFlow, a tiny Python-only habit tracker for Assignment 4. Push back on anything too large or unclear.
 ```
 
 ### `write-a-prd`

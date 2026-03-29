@@ -7,17 +7,19 @@
 
 ## MCP section
 
-- Show Codex MCP config.
-- Show Claude Code MCP config.
-- Show VS Code MCP config.
+- Show `config-examples/codex-config.toml`.
+- Show the project Claude config in `.mcp.json`.
+- Show the Claude notes in `.claude/README.md`.
+- Show `.vscode/mcp.json`.
 - Demonstrate Context7 working.
 - Demonstrate NotebookLM working.
 - Demonstrate Playwright working.
 
 ## Skills section
 
+- Show the required skills in the project `.claude/skills/` folder.
 - Show the required skills installed in Codex.
-- Show the required skills installed in Claude Code.
+- Show the required skills installed in Claude Code if you copied them to user scope.
 - Open chat history for each required skill call.
 - Point to the PRD, issue drafts, tests, and architecture notes.
 

@@ -17,13 +17,13 @@
     },
     "notebooklm": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["notebooklm-mcp@latest"]
+      "command": "cmd",
+      "args": ["/c", "npx", "notebooklm-mcp@latest"]
     },
     "playwright": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["@playwright/mcp@latest", "--headless"]
+      "command": "cmd",
+      "args": ["/c", "npx", "@playwright/mcp@latest", "--headless"]
     }
   }
 }
