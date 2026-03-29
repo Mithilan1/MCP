@@ -1,5 +1,9 @@
 # Assignment Checklist
 
+## Published repository
+
+- `https://github.com/Mithilan1/MCP`
+
 ## Project deliverables in this repo
 
 - small working project
@@ -13,7 +17,6 @@
 
 ## Still required outside this local folder
 
-- push this code to the separate GitHub repository
 - create real GitHub Issues from [docs/issues.md](docs/issues.md)
 - show the required skills in Codex and Claude Code
 - install Node.js so NotebookLM and Playwright can run live
