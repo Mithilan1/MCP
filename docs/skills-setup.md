@@ -6,6 +6,20 @@
 - Codex also has the same five skills available locally.
 - Claude Code can use the project-scoped `.claude/skills/` folder as soon as this repo is opened there.
 
+## Matt Pocock source
+
+These five skills match the ones published in Matt Pocock's `skills` repo:
+
+- `grill-me`
+- `write-a-prd`
+- `prd-to-issues`
+- `tdd`
+- `improve-codebase-architecture`
+
+Reference:
+
+- `https://github.com/mattpocock/skills/tree/main`
+
 ## Canonical skill source in this repo
 
 Treat the project `.claude/skills/` directory as the source of truth for the Claude side of the assignment:
@@ -43,6 +57,56 @@ bash ./.claude/install-skills.sh
 ```
 
 Both helpers copy the local project `.claude/skills/` folder into `~/.claude/skills/`.
+
+## How to run them in Claude Code
+
+1. Open this repo in Claude Code.
+2. Claude Code reads the project-scoped `.claude/skills/` directory automatically.
+3. Invoke a skill directly in chat with one of these commands:
+
+```text
+/grill-me
+/write-a-prd
+/prd-to-issues
+/tdd
+/improve-codebase-architecture
+```
+
+4. After the slash command, give the skill a task for RecallFlow. Example:
+
+```text
+Use grill-me on RecallFlow, a dashboard that follows up with customers who are 30 minutes late for appointments.
+```
+
+5. If you want the same skills available globally in Claude Code, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install_claude_skills.ps1
+```
+
+Then restart Claude Code.
+
+## How to run them from VS Code
+
+VS Code and Claude skills do different jobs in this repo:
+
+- `.vscode/mcp.json` starts the MCP servers for Context7, NotebookLM, and Playwright.
+- the five Matt Pocock skills are still Claude-style skills, so you use them through Claude Code, even if Claude Code is running inside a VS Code workspace or terminal.
+
+Use this flow:
+
+1. Open the repo in VS Code.
+2. Keep `.vscode/mcp.json` in place so VS Code can see the same MCP server setup as Claude Code.
+3. Open Claude Code against this workspace.
+4. Invoke the same slash commands listed above.
+
+If you want the user-level MCP config copied into the normal Windows locations for Codex, VS Code, and Claude, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install_codex_vscode_configs.ps1 -InstallClaudeGlobal -Context7ApiKey "YOUR_CONTEXT7_API_KEY"
+```
+
+Then restart VS Code and Claude Code.
 
 ## What to show in your video
 

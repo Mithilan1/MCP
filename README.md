@@ -9,7 +9,7 @@ RecallFlow is a small proof-of-concept dashboard for teams who need to follow up
 - a PRD and workflow notes
 - GitHub issue drafts mapped from the PRD
 - aligned Codex, Claude Code, and VS Code MCP config files for the assignment walkthrough
-- project-scoped Claude Code skills for the required workflow
+- project-scoped Claude Code skills for the required workflow, aligned to the five Matt Pocock skills used in the assignment
 - assignment setup notes and helper scripts
 
 ## Run the project
@@ -55,3 +55,7 @@ data/                 Runtime JSON data file location
 ## Scope note
 
 This local proof of concept simulates the call/text follow-up step inside the dashboard. It does not integrate a real telecom provider.
+
+## Skills note
+
+The five required skills are already available in `.claude/skills/` for Claude Code and are documented in `docs/skills-setup.md`.

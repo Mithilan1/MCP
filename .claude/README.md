@@ -9,6 +9,14 @@ This folder contains the Claude Code files that sit beside the RecallFlow projec
 - `.claude/install-skills.sh` copies the local project skills into `~/.claude/skills` on macOS or Linux.
 - `../scripts/install_claude_skills.ps1` does the same copy on Windows.
 
+The five project skills align with Matt Pocock's published `skills` collection:
+
+- `grill-me`
+- `write-a-prd`
+- `prd-to-issues`
+- `tdd`
+- `improve-codebase-architecture`
+
 ## MCP config paths
 
 Use one of these two Claude MCP paths:
@@ -41,6 +49,20 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install_claude_skills.ps1
 ```bash
 bash ./.claude/install-skills.sh
 ```
+
+## Running the skills
+
+Claude Code picks up `.claude/skills/` automatically for this project. Invoke a skill in chat with:
+
+```text
+/grill-me
+/write-a-prd
+/prd-to-issues
+/tdd
+/improve-codebase-architecture
+```
+
+If you are working from a VS Code workspace, keep `.vscode/mcp.json` for the MCP servers and run the same skill commands through Claude Code against this repo.
 
 ## Skill order for this project
 
