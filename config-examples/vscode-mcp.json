@@ -18,12 +18,17 @@
     "notebooklm": {
       "type": "stdio",
       "command": "npx",
-      "args": ["notebooklm-mcp@latest"]
+      "args": [
+        "notebooklm-mcp@latest"
+      ]
     },
     "playwright": {
       "type": "stdio",
       "command": "npx",
-      "args": ["@playwright/mcp@latest", "--headless"]
+      "args": [
+        "@playwright/mcp@latest",
+        "--headless"
+      ]
     }
   }
 }
