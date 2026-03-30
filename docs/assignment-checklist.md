@@ -12,6 +12,7 @@
 - issue drafts
 - architecture review
 - Codex MCP config example
+- Codex repo-local skills mirror and MCP notes
 - Claude project MCP config
 - VS Code MCP config
 - Claude skills and setup notes

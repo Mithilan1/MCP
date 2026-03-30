@@ -9,7 +9,7 @@ RecallFlow is a small proof-of-concept dashboard for teams who need to follow up
 - a PRD and workflow notes
 - GitHub issue drafts mapped from the PRD
 - aligned Codex, Claude Code, and VS Code MCP config files for the assignment walkthrough
-- project-scoped Claude Code skills for the required workflow, aligned to the five Matt Pocock skills used in the assignment
+- repo-local Claude Code and Codex skill mirrors for the required workflow, aligned to the five Matt Pocock skills used in the assignment
 - assignment setup notes and helper scripts
 
 ## Run the project
@@ -29,7 +29,7 @@ python -m unittest discover -s tests -v
 ## Suggested demo flow
 
 1. Show the repo structure and assignment docs.
-2. Show `.mcp.json`, `.claude/README.md`, `.vscode/mcp.json`, and `config-examples/codex-config.toml`.
+2. Show `.mcp.json`, `.claude/README.md`, `.codex/README.md`, `.vscode/mcp.json`, and `config-examples/codex-config.toml`.
 3. Start the app with `python -m app.server`.
 4. Open `http://127.0.0.1:8000`.
 5. Create an appointment that is already more than 30 minutes old, or adjust the simulation clock to make it late.
@@ -44,6 +44,7 @@ python -m unittest discover -s tests -v
 app/                  Python backend + static frontend
 .mcp.json             Project-scoped Claude Code MCP config
 .claude/              Claude Code skills, notes, and helper files
+.codex/               Codex skill mirror, MCP notes, and repo-local reference files
 .vscode/              VS Code MCP config kept with the project
 config-examples/      Copy-paste Codex and Claude Code config examples
 docs/                 Assignment evidence and walkthrough material
@@ -58,4 +59,4 @@ This local proof of concept simulates the call/text follow-up step inside the da
 
 ## Skills note
 
-The five required skills are already available in `.claude/skills/` for Claude Code and are documented in `docs/skills-setup.md`.
+The five required skills are available in both `.claude/skills/` and `.codex/skills/`, and the walkthrough notes are documented in `docs/skills-setup.md`.

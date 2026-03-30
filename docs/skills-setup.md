@@ -1,8 +1,8 @@
 # Skills Setup Notes
 
-## Current status on 2026-03-29
+## Current status on 2026-03-30
 
-- The five required skills are already present in this repo under `.claude/skills/`.
+- The five required skills are present in this repo under both `.claude/skills/` and `.codex/skills/`.
 - Codex also has the same five skills available locally.
 - Claude Code can use the project-scoped `.claude/skills/` folder as soon as this repo is opened there.
 
@@ -20,15 +20,20 @@ Reference:
 
 - `https://github.com/mattpocock/skills/tree/main`
 
-## Canonical skill source in this repo
+## Skill locations in this repo
 
-Treat the project `.claude/skills/` directory as the source of truth for the Claude side of the assignment:
+This repo now keeps the same five skill folders in both local mirrors:
 
 - `grill-me`
 - `write-a-prd`
 - `prd-to-issues`
 - `tdd`
 - `improve-codebase-architecture`
+
+Paths:
+
+- Claude project mirror: `.claude/skills/<skill-name>/SKILL.md`
+- Codex repo mirror: `.codex/skills/<skill-name>/SKILL.md`
 
 ## Claude Code path rules
 
@@ -111,6 +116,7 @@ Then restart VS Code and Claude Code.
 ## What to show in your video
 
 - the project `.claude/skills/` folder in this repo
+- the project `.codex/skills/` folder in this repo
 - optionally the user-scoped `~/.claude/skills/` folder after copying
 - the Codex skills list if you want to show the same workflow in Codex too
 - your chat history for each required skill call in the required order

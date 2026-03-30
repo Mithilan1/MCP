@@ -2,12 +2,12 @@
 
 This repo now keeps the RecallFlow MCP story aligned across Codex, Claude Code, and VS Code.
 
-## Verified machine status on 2026-03-29
+## Verified machine status on 2026-03-30
 
 - Codex CLI is installed.
 - VS Code is installed.
 - Python and Git are installed.
-- The five required skills are present in the repo under `.claude/skills/`.
+- The five required skills are present in the repo under both `.claude/skills/` and `.codex/skills/`.
 - A Claude executable exists locally, but `claude` is still not on `PATH`.
 - Node.js is still missing from `PATH`.
 
@@ -17,6 +17,7 @@ This repo now keeps the RecallFlow MCP story aligned across Codex, Claude Code, 
 - Claude project MCP config: `.mcp.json`
 - Claude global MCP template: `config-examples/claude-project.mcp.json`
 - Claude folder mirror and notes: `.claude/.mcp.json` and `.claude/README.md`
+- Codex folder mirror and notes: `.codex/.mcp.json` and `.codex/README.md`
 - VS Code project config: `.vscode/mcp.json`
 - Windows MCP install helper: `scripts/install_codex_vscode_configs.ps1`
 
@@ -47,6 +48,7 @@ The local app simulates MCP-triggered call and text follow-up inside the dashboa
 ## What is ready now
 
 - The repo root `.mcp.json` is ready for project-scoped Claude Code use.
+- The repo-local `.codex/.mcp.json` mirrors the same MCP server set for walkthrough purposes.
 - The VS Code config is ready to copy into the VS Code user MCP location.
 - The Codex config example uses the same three MCP servers as the Claude and VS Code configs.
 - `.env.example` documents the environment variables used by the setup.
@@ -68,5 +70,6 @@ NotebookLM and Playwright are configured through `npx`. The config is ready, but
 - Show `config-examples/codex-config.toml`.
 - Show `.mcp.json`.
 - Show `.claude/README.md`.
+- Show `.codex/README.md`.
 - Show `.vscode/mcp.json`.
 - Demonstrate Context7, NotebookLM, and Playwright against RecallFlow after Node.js is installed.
