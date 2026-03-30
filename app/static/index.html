@@ -3,63 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HabitFlow</title>
+  <title>RecallFlow</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <main class="shell">
     <section class="hero">
       <p class="eyebrow">Assignment 4 Demo Project</p>
-      <h1>HabitFlow</h1>
-      <p class="lede">Track a few simple habits, celebrate streaks, and keep the project small enough to explain clearly during your video walkthrough.</p>
+      <h1>RecallFlow</h1>
+      <p class="lede">Watch for customers who are 30 minutes late, trigger an MCP follow-up by call or text, and offer a new appointment slot without leaving the dashboard.</p>
     </section>
 
     <section class="panel summary-panel">
       <div class="summary-card">
-        <span class="summary-label">Habits</span>
-        <strong id="total-habits">0</strong>
+        <span class="summary-label">Appointments</span>
+        <strong id="total-appointments">0</strong>
       </div>
       <div class="summary-card">
-        <span class="summary-label">Completed now</span>
-        <strong id="completed-now">0</strong>
+        <span class="summary-label">30+ min late</span>
+        <strong id="late-appointments">0</strong>
       </div>
       <div class="summary-card">
-        <span class="summary-label">Best streak</span>
-        <strong id="best-streak">0</strong>
+        <span class="summary-label">MCP follow-ups</span>
+        <strong id="follow-ups-sent">0</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Rescheduled</span>
+        <strong id="rescheduled-appointments">0</strong>
       </div>
     </section>
 
     <section class="layout">
-      <section class="panel">
-        <h2>Add a habit</h2>
-        <form id="habit-form" class="habit-form">
+      <section class="panel stack-panel">
+        <section>
+          <div class="panel-heading">
+            <h2>Add appointment</h2>
+          </div>
+          <form id="appointment-form" class="appointment-form">
+            <label>
+              Customer name
+              <input id="customer-name" name="customer_name" type="text" placeholder="Jordan Lee" required>
+            </label>
+            <label>
+              Phone number
+              <input id="phone-number" name="phone_number" type="tel" placeholder="555-0147" required>
+            </label>
+            <label>
+              Appointment type
+              <input id="appointment-type" name="appointment_type" type="text" placeholder="Dental cleaning" required>
+            </label>
+            <label>
+              Scheduled for
+              <input id="scheduled-at" name="scheduled_at" type="datetime-local" required>
+            </label>
+            <label>
+              Preferred follow-up
+              <select id="preferred-channel" name="preferred_channel">
+                <option value="text">Text</option>
+                <option value="call">Call</option>
+              </select>
+            </label>
+            <label>
+              Notes
+              <textarea id="notes" name="notes" rows="3" placeholder="Missed a previous visit last month"></textarea>
+            </label>
+            <button type="submit">Create appointment</button>
+          </form>
+        </section>
+
+        <section class="clock-panel">
+          <div class="panel-heading">
+            <h2>Simulation clock</h2>
+            <button id="refresh-button" class="secondary-button" type="button">Refresh</button>
+          </div>
           <label>
-            Habit name
-            <input id="name" name="name" type="text" placeholder="Read for 20 minutes" required>
+            Reference time
+            <input id="reference-time" name="reference_time" type="datetime-local">
           </label>
-          <label>
-            Description
-            <textarea id="description" name="description" rows="3" placeholder="A tiny habit that is easy to keep"></textarea>
-          </label>
-          <label>
-            Frequency
-            <select id="frequency" name="frequency">
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-            </select>
-          </label>
-          <button type="submit">Create habit</button>
+          <p id="reference-label" class="clock-note">Use this to simulate when a customer becomes 30 minutes late.</p>
           <p id="form-message" class="form-message" role="status"></p>
-        </form>
+        </section>
       </section>
 
       <section class="panel">
         <div class="panel-heading">
-          <h2>Your tracker</h2>
-          <button id="refresh-button" class="secondary-button" type="button">Refresh</button>
+          <div>
+            <h2>Missed appointment queue</h2>
+            <p class="queue-note">Once the simulation clock reaches 30 minutes past the scheduled time, the dashboard enables MCP follow-up actions.</p>
+          </div>
         </div>
-        <div id="habit-list" class="habit-list">
-          <p class="empty-state">No habits yet. Add one to get started.</p>
+        <div id="appointment-list" class="appointment-list">
+          <p class="empty-state">No appointments yet. Add one to start tracking late arrivals.</p>
         </div>
       </section>
     </section>

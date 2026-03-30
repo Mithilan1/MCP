@@ -4,7 +4,7 @@ This file records what was actually completed in this environment during the ass
 
 ## Completed here
 
-- Created a small working project called HabitFlow.
+- Created a small working project called RecallFlow.
 - Added unit tests and verified they pass.
 - Verified the local web app serves successfully.
 - Added the five required skills to this repo under `.claude/skills/` for Claude Code project scope.
@@ -22,6 +22,7 @@ This file records what was actually completed in this environment during the ass
 - Node.js installation
 - Live Claude Code verification
 - Live MCP setup for NotebookLM and Playwright
+- Real telecom delivery for call or text follow-up
 
 ## Important environment blockers
 

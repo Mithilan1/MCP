@@ -6,53 +6,85 @@ from pathlib import Path
 from uuid import uuid4
 
 from app.data_store import JsonFileStore
-from app.service import HabitService
+from app.service import AppointmentService
 
 
-class HabitServiceTests(unittest.TestCase):
+class AppointmentServiceTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp_dir = Path(__file__).resolve().parent / ".tmp" / uuid4().hex
         self.temp_dir.mkdir(parents=True, exist_ok=True)
-        self.store = JsonFileStore(self.temp_dir / "habits.json")
-        self.service = HabitService(self.store)
+        self.store = JsonFileStore(self.temp_dir / "appointments.json")
+        self.service = AppointmentService(self.store)
 
     def tearDown(self) -> None:
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
-    def test_create_habit_persists_record(self) -> None:
-        habit = self.service.create_habit("Read", "Read 20 minutes", "daily")
+    def test_create_appointment_persists_record(self) -> None:
+        appointment = self.service.create_appointment(
+            customer_name="Jordan Lee",
+            phone_number="555-0147",
+            appointment_type="Dental cleaning",
+            scheduled_at="2026-03-25T09:00",
+            preferred_channel="text",
+        )
 
-        self.assertEqual(habit["name"], "Read")
-        self.assertEqual(len(self.service.list_habits()), 1)
+        self.assertEqual(appointment["customer_name"], "Jordan Lee")
+        self.assertEqual(len(self.service.list_appointments("2026-03-25T08:45")), 1)
 
-    def test_create_habit_rejects_blank_name(self) -> None:
+    def test_create_appointment_rejects_blank_customer_name(self) -> None:
         with self.assertRaises(ValueError):
-            self.service.create_habit("   ")
+            self.service.create_appointment(
+                customer_name="   ",
+                phone_number="555-0147",
+                appointment_type="Dental cleaning",
+                scheduled_at="2026-03-25T09:00",
+            )
 
-    def test_complete_habit_is_idempotent_for_same_day(self) -> None:
-        habit = self.service.create_habit("Walk")
+    def test_follow_up_requires_thirty_minutes_of_lateness(self) -> None:
+        appointment = self.service.create_appointment(
+            customer_name="Chris Park",
+            phone_number="555-0182",
+            appointment_type="Massage therapy",
+            scheduled_at="2026-03-25T09:00",
+        )
 
-        updated = self.service.complete_habit(habit["id"], "2026-03-25")
-        updated_again = self.service.complete_habit(habit["id"], "2026-03-25")
+        with self.assertRaises(ValueError):
+            self.service.send_follow_up(appointment["id"], "text", "2026-03-25T09:20")
 
-        self.assertTrue(updated["is_complete_now"])
-        self.assertEqual(updated_again["completions"], ["2026-03-25"])
+    def test_follow_up_records_selected_channel(self) -> None:
+        appointment = self.service.create_appointment(
+            customer_name="Taylor Nguyen",
+            phone_number="555-0170",
+            appointment_type="Eye exam",
+            scheduled_at="2026-03-25T09:00",
+            preferred_channel="text",
+        )
 
-    def test_daily_streak_counts_consecutive_days(self) -> None:
-        habit = self.service.create_habit("Journal")
-        self.service.complete_habit(habit["id"], "2026-03-23")
-        self.service.complete_habit(habit["id"], "2026-03-24")
-        updated = self.service.complete_habit(habit["id"], "2026-03-25")
+        updated = self.service.send_follow_up(appointment["id"], "call", "2026-03-25T09:35")
 
-        self.assertEqual(updated["current_streak"], 3)
+        self.assertEqual(updated["status"], "follow_up_sent")
+        self.assertEqual(updated["last_follow_up_channel"], "call")
+        self.assertEqual(updated["follow_up_count"], 1)
 
-    def test_weekly_streak_counts_consecutive_weeks(self) -> None:
-        habit = self.service.create_habit("Meal prep", frequency="weekly")
-        self.service.complete_habit(habit["id"], "2026-03-11")
-        self.service.complete_habit(habit["id"], "2026-03-18")
-        updated = self.service.complete_habit(habit["id"], "2026-03-25")
+    def test_reschedule_updates_slot_after_follow_up(self) -> None:
+        appointment = self.service.create_appointment(
+            customer_name="Morgan Ellis",
+            phone_number="555-0119",
+            appointment_type="Therapy session",
+            scheduled_at="2026-03-25T09:00",
+        )
+        self.service.send_follow_up(appointment["id"], "text", "2026-03-25T09:35")
 
-        self.assertEqual(updated["current_streak"], 3)
+        updated = self.service.reschedule_appointment(
+            appointment["id"],
+            new_scheduled_at="2026-03-25T11:00",
+            reference_time="2026-03-25T09:40",
+        )
+
+        self.assertEqual(updated["status"], "rescheduled")
+        self.assertEqual(updated["scheduled_at"], "2026-03-25T11:00")
+        self.assertEqual(updated["reschedule_count"], 1)
+        self.assertIn("new appointment", updated["latest_activity"])
 
 
 if __name__ == "__main__":

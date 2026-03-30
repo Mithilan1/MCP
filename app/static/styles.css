@@ -1,13 +1,17 @@
 :root {
   color-scheme: light;
-  --bg: #f5efe2;
-  --panel: rgba(255, 252, 245, 0.88);
-  --ink: #1f2a2a;
-  --muted: #5f6a68;
-  --accent: #0f766e;
-  --accent-soft: #d4efe9;
-  --border: rgba(31, 42, 42, 0.12);
-  --shadow: 0 22px 40px rgba(25, 36, 35, 0.1);
+  --bg: #f6efe8;
+  --panel: rgba(255, 251, 247, 0.88);
+  --ink: #1f262b;
+  --muted: #5f6670;
+  --accent: #9a3412;
+  --accent-soft: #fbe4d8;
+  --alert: #b91c1c;
+  --alert-soft: #fee2e2;
+  --calm: #14532d;
+  --calm-soft: #dcfce7;
+  --border: rgba(31, 38, 43, 0.12);
+  --shadow: 0 24px 44px rgba(35, 33, 30, 0.11);
   --headline: Georgia, "Times New Roman", serif;
   --body: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -22,12 +26,13 @@ body {
   font-family: var(--body);
   color: var(--ink);
   background:
-    radial-gradient(circle at top left, rgba(15, 118, 110, 0.2), transparent 34%),
-    linear-gradient(180deg, #f9f4e8 0%, var(--bg) 100%);
+    radial-gradient(circle at top left, rgba(154, 52, 18, 0.18), transparent 34%),
+    radial-gradient(circle at right center, rgba(20, 83, 45, 0.14), transparent 28%),
+    linear-gradient(180deg, #fbf5ef 0%, var(--bg) 100%);
 }
 
 .shell {
-  width: min(1100px, calc(100% - 2rem));
+  width: min(1180px, calc(100% - 2rem));
   margin: 0 auto;
   padding: 2.5rem 0 4rem;
 }
@@ -45,7 +50,8 @@ body {
 }
 
 h1,
-h2 {
+h2,
+h3 {
   margin: 0;
   font-family: var(--headline);
 }
@@ -56,15 +62,28 @@ h1 {
 }
 
 h2 {
-  font-size: 1.6rem;
+  font-size: 1.55rem;
+}
+
+h3 {
+  font-size: 1.35rem;
+}
+
+.lede,
+.queue-note,
+.clock-note,
+.activity-note,
+.notes-line,
+.contact-line,
+.status-copy {
+  color: var(--muted);
 }
 
 .lede {
-  max-width: 58ch;
+  max-width: 60ch;
   margin: 1rem 0 0;
   font-size: 1.05rem;
   line-height: 1.6;
-  color: var(--muted);
 }
 
 .summary-panel,
@@ -78,7 +97,7 @@ h2 {
 
 .summary-panel {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
   padding: 1rem;
 }
@@ -86,7 +105,7 @@ h2 {
 .summary-card {
   padding: 1rem;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.68);
 }
 
 .summary-card strong {
@@ -102,7 +121,7 @@ h2 {
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(280px, 360px) 1fr;
+  grid-template-columns: minmax(300px, 390px) 1fr;
   gap: 1.25rem;
   margin-top: 1.25rem;
 }
@@ -111,16 +130,23 @@ h2 {
   padding: 1.25rem;
 }
 
+.stack-panel {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
 .panel-heading {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1rem;
 }
 
-.habit-form,
-.habit-list {
+.appointment-form,
+.appointment-list,
+.clock-panel {
   display: grid;
   gap: 1rem;
 }
@@ -144,9 +170,9 @@ textarea,
 select {
   width: 100%;
   padding: 0.85rem 0.95rem;
-  border: 1px solid rgba(31, 42, 42, 0.14);
+  border: 1px solid rgba(31, 38, 43, 0.14);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   color: var(--ink);
 }
 
@@ -169,6 +195,12 @@ button:hover {
   opacity: 0.96;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
 .secondary-button {
   background: var(--accent-soft);
   color: var(--accent);
@@ -180,56 +212,121 @@ button:hover {
   color: var(--accent);
 }
 
-.habit-card {
+.appointment-card {
   display: grid;
-  gap: 0.8rem;
+  gap: 0.85rem;
   padding: 1rem;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(31, 42, 42, 0.08);
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(31, 38, 43, 0.08);
 }
 
-.habit-meta {
+.card-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.customer-name {
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+
+.contact-line,
+.activity-note,
+.notes-line,
+.queue-note,
+.clock-note,
+.empty-state {
+  margin: 0;
+}
+
+.appointment-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-.pill {
+.pill,
+.status-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   padding: 0.35rem 0.7rem;
   border-radius: 999px;
-  background: #f1f7f6;
-  color: var(--muted);
   font-size: 0.85rem;
 }
 
-.habit-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.habit-actions button {
-  padding-inline: 1rem;
-}
-
-.empty-state {
-  margin: 0;
+.pill {
+  background: #f6f4f2;
   color: var(--muted);
 }
 
-@media (max-width: 760px) {
-  .summary-panel,
+.status-pill {
+  background: #f3ebe7;
+  color: var(--accent);
+}
+
+.status-pill.alert {
+  background: var(--alert-soft);
+  color: var(--alert);
+}
+
+.status-pill.accent {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.status-pill.calm {
+  background: var(--calm-soft);
+  color: var(--calm);
+}
+
+.appointment-actions,
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.inline-form {
+  border-top: 1px solid rgba(31, 38, 43, 0.08);
+  padding-top: 0.8rem;
+}
+
+.inline-form label {
+  flex: 1 1 240px;
+}
+
+@media (max-width: 900px) {
+  .summary-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .summary-panel {
     grid-template-columns: 1fr;
   }
 
   .shell {
-    width: min(100% - 1rem, 1100px);
+    width: min(100% - 1rem, 1180px);
     padding-top: 1.25rem;
+  }
+
+  .card-topline,
+  .appointment-actions,
+  .inline-form {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

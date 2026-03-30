@@ -3,7 +3,7 @@
 ## Opening
 
 - State the assignment title and show the GitHub repository.
-- Explain that the project is HabitFlow, a small habit-tracking proof of concept.
+- Explain that the project is RecallFlow, a small missed-appointment follow-up proof of concept.
 
 ## MCP section
 
@@ -27,9 +27,10 @@
 
 - Run `python -m app.server`.
 - Open `http://127.0.0.1:8000`.
-- Create a habit.
-- Mark it complete.
-- Show the updated streak and dashboard cards.
+- Create an appointment.
+- Move the simulation clock so the customer becomes 30 minutes late.
+- Trigger an MCP text or call follow-up.
+- Reschedule the appointment.
 - Run `python -m unittest discover -s tests -v`.
 
 ## Closing

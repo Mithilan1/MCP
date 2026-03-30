@@ -1,1 +1,1 @@
-"""HabitFlow application package."""
+"""RecallFlow application package."""

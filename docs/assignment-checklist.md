@@ -22,6 +22,6 @@
 - create real GitHub Issues from [docs/issues.md](docs/issues.md)
 - show the required skills in Codex and Claude Code
 - install Node.js so NotebookLM and Playwright can run live
-- configure and demonstrate Context7, NotebookLM, and Playwright in Codex, Claude Code, and VS Code against HabitFlow
+- configure and demonstrate Context7, NotebookLM, and Playwright in Codex, Claude Code, and VS Code against RecallFlow
 - record the video walkthrough with audio
 - submit the GitHub repository URL

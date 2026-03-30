@@ -2,29 +2,30 @@
 
 Paste these into your separate GitHub repository as real issues so the repo matches the assignment requirement.
 
-## Issue 1: Bootstrap HabitFlow and define the core data model
+## Issue 1: Bootstrap RecallFlow and define the appointment model
 
-Create the initial Python project structure for HabitFlow.
+Create the initial Python project structure for RecallFlow.
 
 Acceptance criteria:
 
 - `app/`, `tests/`, and `docs/` folders exist
-- a `Habit` model exists with daily and weekly frequency support
-- JSON persistence path is defined
+- an `Appointment` model exists with customer details, scheduled time, and follow-up preferences
+- a JSON persistence path is defined
 - README includes run and test instructions
 
-## Issue 2: Build the habit service and local persistence workflow
+## Issue 2: Build late-detection and follow-up service logic
 
-Implement business logic for creating habits, listing them, and completing them.
+Implement business logic for creating appointments, detecting 30-minute lateness, sending follow-up actions, and rescheduling.
 
 Acceptance criteria:
 
-- habits can be created and saved locally
-- duplicate completion for the same period is ignored
-- streak calculation works for daily and weekly habits
+- appointments can be created and saved locally
+- appointments become follow-up eligible at 30 minutes late
+- follow-up actions record whether the outreach was by text or call
+- rescheduling updates the appointment slot after follow-up
 - service tests cover the main workflows
 
-## Issue 3: Expose API endpoints and a lightweight frontend
+## Issue 3: Expose API endpoints and the missed-appointment dashboard
 
 Add the HTTP layer and a simple browser UI.
 
@@ -32,8 +33,9 @@ Acceptance criteria:
 
 - the project serves a home page
 - `/api/health` returns success
-- users can create habits from the UI
-- users can mark a habit complete from the UI
+- users can create appointments from the UI
+- users can trigger a call or text follow-up from the UI
+- users can reschedule an appointment from the UI
 - dashboard cards update after user actions
 
 ## Issue 4: Add test coverage and tighten the demo story

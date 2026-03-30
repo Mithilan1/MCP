@@ -13,7 +13,7 @@ if [ ! -d "$SOURCE_DIR" ]; then
 fi
 
 mkdir -p "$TARGET_DIR"
-echo "Copying HabitFlow Claude skills to $TARGET_DIR..."
+echo "Copying RecallFlow Claude skills to $TARGET_DIR..."
 
 for skill_dir in "$SOURCE_DIR"/*; do
   [ -d "$skill_dir" ] || continue

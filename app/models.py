@@ -4,31 +4,47 @@ from dataclasses import dataclass, field
 
 
 @dataclass
-class Habit:
+class Appointment:
     id: str
-    name: str
-    description: str
-    frequency: str
+    customer_name: str
+    phone_number: str
+    appointment_type: str
+    scheduled_at: str
+    preferred_channel: str
     created_at: str
-    completions: list[str] = field(default_factory=list)
+    notes: str = ""
+    status: str = "scheduled"
+    activity_log: list[dict[str, str]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, object]:
         return {
             "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "frequency": self.frequency,
+            "customer_name": self.customer_name,
+            "phone_number": self.phone_number,
+            "appointment_type": self.appointment_type,
+            "scheduled_at": self.scheduled_at,
+            "preferred_channel": self.preferred_channel,
             "created_at": self.created_at,
-            "completions": sorted(set(self.completions)),
+            "notes": self.notes,
+            "status": self.status,
+            "activity_log": list(self.activity_log),
         }
 
     @classmethod
-    def from_dict(cls, payload: dict[str, object]) -> "Habit":
+    def from_dict(cls, payload: dict[str, object]) -> "Appointment":
         return cls(
             id=str(payload["id"]),
-            name=str(payload["name"]),
-            description=str(payload.get("description", "")),
-            frequency=str(payload.get("frequency", "daily")),
+            customer_name=str(payload["customer_name"]),
+            phone_number=str(payload["phone_number"]),
+            appointment_type=str(payload["appointment_type"]),
+            scheduled_at=str(payload["scheduled_at"]),
+            preferred_channel=str(payload.get("preferred_channel", "text")),
             created_at=str(payload["created_at"]),
-            completions=[str(item) for item in payload.get("completions", [])],
+            notes=str(payload.get("notes", "")),
+            status=str(payload.get("status", "scheduled")),
+            activity_log=[
+                {str(key): str(value) for key, value in item.items()}
+                for item in payload.get("activity_log", [])
+                if isinstance(item, dict)
+            ],
         )

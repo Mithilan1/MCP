@@ -9,7 +9,7 @@ Target repository:
 
 ```powershell
 git add .
-git commit -m "Build HabitFlow assignment project"
+git commit -m "Build RecallFlow appointment follow-up project"
 git remote add origin https://github.com/Mithilan1/MCP.git
 git branch -M main
 git push -u origin main
@@ -21,9 +21,9 @@ Create the issues in the target repository using the titles and acceptance crite
 
 Suggested titles:
 
-1. Bootstrap HabitFlow and define the core data model
-2. Build the habit service and local persistence workflow
-3. Expose API endpoints and a lightweight frontend
+1. Bootstrap RecallFlow and define the appointment model
+2. Build late-detection and follow-up service logic
+3. Expose API endpoints and the missed-appointment dashboard
 4. Add test coverage and tighten the demo story
 5. Improve architecture and prepare assignment evidence
 

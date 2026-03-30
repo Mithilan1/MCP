@@ -1,6 +1,6 @@
-# HabitFlow
+# RecallFlow
 
-HabitFlow is a small proof-of-concept habit tracker built for Assignment 4. It uses a Python standard-library backend, a static frontend, and unit tests so the whole repo stays easy to run and explain on video.
+RecallFlow is a small proof-of-concept dashboard for teams who need to follow up with customers that miss appointments. If a customer is 30 minutes late, the app flags the appointment, lets the operator trigger an MCP follow-up by text or call, and offers a reschedule flow in the same screen.
 
 ## What this repo includes
 
@@ -30,12 +30,13 @@ python -m unittest discover -s tests -v
 
 1. Show the repo structure and assignment docs.
 2. Show `.mcp.json`, `.claude/README.md`, `.vscode/mcp.json`, and `config-examples/codex-config.toml`.
-3. Optionally show `scripts/install_codex_vscode_configs.ps1` and `scripts/install_claude_skills.ps1`.
-4. Start the app with `python -m app.server`.
-5. Open `http://127.0.0.1:8000`.
-6. Create a habit and mark it complete.
-7. Run the tests.
-8. Show the PRD, issue drafts, MCP notes, and checklist in `docs/`.
+3. Start the app with `python -m app.server`.
+4. Open `http://127.0.0.1:8000`.
+5. Create an appointment that is already more than 30 minutes old, or adjust the simulation clock to make it late.
+6. Trigger an MCP text or call follow-up.
+7. Reschedule the missed appointment from the dashboard.
+8. Run the tests.
+9. Show the PRD, issue drafts, MCP notes, and checklist in `docs/`.
 
 ## Repo structure
 
@@ -50,3 +51,7 @@ scripts/              Small setup helpers for the assignment
 tests/                Unit tests
 data/                 Runtime JSON data file location
 ```
+
+## Scope note
+
+This local proof of concept simulates the call/text follow-up step inside the dashboard. It does not integrate a real telecom provider.

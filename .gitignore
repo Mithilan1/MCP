@@ -1,6 +1,6 @@
 __pycache__/
 *.pyc
-data/habits.json
+data/*.json
 .env
 .env.*
 !.env.example

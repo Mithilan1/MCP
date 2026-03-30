@@ -16,9 +16,9 @@ This file is meant to support the assignment video and repository narrative.
 
 Use it to challenge the project choice and keep scope tight:
 
-- Why a habit tracker instead of a larger app?
+- Why a missed-appointment recovery tool instead of a broader scheduling platform?
 - Why use Python standard library only?
-- What is the smallest useful version of the product?
+- Why simulate MCP follow-up locally instead of building real telecom integration?
 
 Expected output to show in chat:
 

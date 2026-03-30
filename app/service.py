@@ -1,132 +1,216 @@
 from __future__ import annotations
 
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 from .data_store import JsonFileStore
-from .models import Habit
+from .models import Appointment
 
-VALID_FREQUENCIES = {"daily", "weekly"}
+VALID_CHANNELS = {"call", "text"}
+LATE_THRESHOLD_MINUTES = 30
 
 
-class HabitService:
+class AppointmentService:
     def __init__(self, store: JsonFileStore) -> None:
         self.store = store
 
-    def list_habits(self, reference_date: str | None = None) -> list[dict[str, object]]:
-        target_date = self._parse_date(reference_date) if reference_date else date.today()
-        return [self._habit_view(habit, target_date) for habit in self.store.load()]
+    def list_appointments(self, reference_time: str | None = None) -> list[dict[str, object]]:
+        target_time = self._parse_datetime(reference_time) if reference_time else self._now()
+        return [self._appointment_view(appointment, target_time) for appointment in self.store.load()]
 
-    def create_habit(
+    def create_appointment(
         self,
-        name: str,
-        description: str = "",
-        frequency: str = "daily",
+        customer_name: str,
+        phone_number: str,
+        appointment_type: str,
+        scheduled_at: str,
+        preferred_channel: str = "text",
+        notes: str = "",
     ) -> dict[str, object]:
-        clean_name = name.strip()
-        clean_description = description.strip()
-        clean_frequency = frequency.strip().lower()
+        clean_customer_name = customer_name.strip()
+        clean_phone_number = phone_number.strip()
+        clean_appointment_type = appointment_type.strip()
+        clean_preferred_channel = preferred_channel.strip().lower()
+        clean_notes = notes.strip()
 
-        if not clean_name:
-            raise ValueError("Habit name is required.")
-        if clean_frequency not in VALID_FREQUENCIES:
-            raise ValueError("Frequency must be daily or weekly.")
+        if not clean_customer_name:
+            raise ValueError("Customer name is required.")
+        if not clean_phone_number:
+            raise ValueError("Phone number is required.")
+        if not clean_appointment_type:
+            raise ValueError("Appointment type is required.")
+        if clean_preferred_channel not in VALID_CHANNELS:
+            raise ValueError("Preferred channel must be call or text.")
 
-        habits = self.store.load()
-        habit = Habit(
+        scheduled_time = self._parse_datetime(scheduled_at)
+        appointments = self.store.load()
+        appointment = Appointment(
             id=uuid4().hex[:8],
-            name=clean_name,
-            description=clean_description,
-            frequency=clean_frequency,
-            created_at=datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
-            completions=[],
+            customer_name=clean_customer_name,
+            phone_number=clean_phone_number,
+            appointment_type=clean_appointment_type,
+            scheduled_at=scheduled_time.isoformat(timespec="minutes"),
+            preferred_channel=clean_preferred_channel,
+            created_at=self._timestamp_label(self._now()),
+            notes=clean_notes,
+            status="scheduled",
+            activity_log=[],
         )
-        habits.append(habit)
-        self.store.save(habits)
-        return self._habit_view(habit, date.today())
+        appointments.append(appointment)
+        self.store.save(appointments)
+        return self._appointment_view(appointment, self._now())
 
-    def complete_habit(self, habit_id: str, on_date: str | None = None) -> dict[str, object]:
-        target_date = self._parse_date(on_date) if on_date else date.today()
-        habits = self.store.load()
+    def send_follow_up(
+        self,
+        appointment_id: str,
+        channel: str | None = None,
+        reference_time: str | None = None,
+    ) -> dict[str, object]:
+        target_time = self._parse_datetime(reference_time) if reference_time else self._now()
+        appointments = self.store.load()
 
-        for habit in habits:
-            if habit.id != habit_id:
+        for appointment in appointments:
+            if appointment.id != appointment_id:
                 continue
 
-            completion_key = target_date.isoformat()
-            if completion_key not in habit.completions:
-                habit.completions.append(completion_key)
-            self.store.save(habits)
-            return self._habit_view(habit, target_date)
+            chosen_channel = (channel or appointment.preferred_channel).strip().lower()
+            if chosen_channel not in VALID_CHANNELS:
+                raise ValueError("Follow-up channel must be call or text.")
+            if not self._is_late(appointment, target_time):
+                raise ValueError("Appointment is not 30 minutes late yet.")
+            if appointment.status == "follow_up_sent":
+                raise ValueError("Follow-up already sent for this appointment.")
 
-        raise KeyError(f"Unknown habit: {habit_id}")
+            appointment.status = "follow_up_sent"
+            appointment.activity_log.append(
+                {
+                    "type": "follow_up",
+                    "timestamp": self._timestamp_label(target_time),
+                    "channel": chosen_channel,
+                    "summary": f"MCP sent a {chosen_channel} follow-up with a reschedule option.",
+                }
+            )
+            self.store.save(appointments)
+            return self._appointment_view(appointment, target_time)
 
-    def dashboard(self, reference_date: str | None = None) -> dict[str, object]:
-        target_date = self._parse_date(reference_date) if reference_date else date.today()
-        habits = [self._habit_view(habit, target_date) for habit in self.store.load()]
+        raise KeyError(f"Unknown appointment: {appointment_id}")
+
+    def reschedule_appointment(
+        self,
+        appointment_id: str,
+        new_scheduled_at: str,
+        reference_time: str | None = None,
+    ) -> dict[str, object]:
+        target_time = self._parse_datetime(reference_time) if reference_time else self._now()
+        updated_time = self._parse_datetime(new_scheduled_at)
+        appointments = self.store.load()
+
+        for appointment in appointments:
+            if appointment.id != appointment_id:
+                continue
+
+            if appointment.status != "follow_up_sent":
+                raise ValueError("Send follow-up before rescheduling this appointment.")
+            if updated_time <= target_time:
+                raise ValueError("Rescheduled appointment must be after the current reference time.")
+
+            previous_slot = appointment.scheduled_at
+            appointment.scheduled_at = updated_time.isoformat(timespec="minutes")
+            appointment.status = "rescheduled"
+            appointment.activity_log.append(
+                {
+                    "type": "reschedule",
+                    "timestamp": self._timestamp_label(target_time),
+                    "from": previous_slot,
+                    "to": appointment.scheduled_at,
+                    "summary": f"Customer accepted a new appointment for {self._format_datetime(updated_time)}.",
+                }
+            )
+            self.store.save(appointments)
+            return self._appointment_view(appointment, target_time)
+
+        raise KeyError(f"Unknown appointment: {appointment_id}")
+
+    def dashboard(self, reference_time: str | None = None) -> dict[str, object]:
+        target_time = self._parse_datetime(reference_time) if reference_time else self._now()
+        appointments = [self._appointment_view(appointment, target_time) for appointment in self.store.load()]
 
         return {
-            "reference_date": target_date.isoformat(),
-            "total_habits": len(habits),
-            "completed_for_current_period": sum(1 for item in habits if item["is_complete_now"]),
-            "best_streak": max((int(item["current_streak"]) for item in habits), default=0),
-            "habits": habits,
+            "reference_time": target_time.isoformat(timespec="minutes"),
+            "reference_time_label": self._format_datetime(target_time),
+            "total_appointments": len(appointments),
+            "late_appointments": sum(1 for item in appointments if item["is_late"]),
+            "follow_ups_sent": sum(1 for item in appointments if int(item["follow_up_count"]) > 0),
+            "rescheduled_appointments": sum(1 for item in appointments if int(item["reschedule_count"]) > 0),
+            "appointments": appointments,
         }
 
-    def _habit_view(self, habit: Habit, reference_date: date) -> dict[str, object]:
+    def _appointment_view(self, appointment: Appointment, reference_time: datetime) -> dict[str, object]:
+        latest_activity = appointment.activity_log[-1] if appointment.activity_log else None
+        follow_up_events = [item for item in appointment.activity_log if item.get("type") == "follow_up"]
+        reschedule_events = [item for item in appointment.activity_log if item.get("type") == "reschedule"]
+        scheduled_time = self._parse_datetime(appointment.scheduled_at)
+
         return {
-            **habit.to_dict(),
-            "current_streak": self._current_streak(habit, reference_date),
-            "is_complete_now": self._is_complete_for_reference(habit, reference_date),
-            "current_period_label": self._current_period_label(habit.frequency, reference_date),
+            **appointment.to_dict(),
+            "scheduled_for_label": self._format_datetime(scheduled_time),
+            "minutes_late": self._minutes_late(appointment, reference_time),
+            "timing_status": self._timing_status(appointment, reference_time),
+            "is_late": self._is_late(appointment, reference_time),
+            "needs_follow_up": self._needs_follow_up(appointment, reference_time),
+            "can_reschedule": appointment.status == "follow_up_sent",
+            "status_label": self._status_label(appointment.status),
+            "follow_up_count": len(follow_up_events),
+            "reschedule_count": len(reschedule_events),
+            "latest_activity": latest_activity["summary"] if latest_activity else "No outreach yet.",
+            "last_follow_up_channel": follow_up_events[-1]["channel"] if follow_up_events else None,
         }
 
-    def _current_streak(self, habit: Habit, reference_date: date) -> int:
-        completion_dates = sorted(self._parse_date(value) for value in set(habit.completions))
-        if not completion_dates:
+    def _needs_follow_up(self, appointment: Appointment, reference_time: datetime) -> bool:
+        return self._is_late(appointment, reference_time) and appointment.status != "follow_up_sent"
+
+    def _is_late(self, appointment: Appointment, reference_time: datetime) -> bool:
+        scheduled_time = self._parse_datetime(appointment.scheduled_at)
+        return reference_time >= scheduled_time + timedelta(minutes=LATE_THRESHOLD_MINUTES)
+
+    def _minutes_late(self, appointment: Appointment, reference_time: datetime) -> int:
+        scheduled_time = self._parse_datetime(appointment.scheduled_at)
+        late_delta = reference_time - scheduled_time
+        if late_delta.total_seconds() <= 0:
             return 0
-
-        if habit.frequency == "daily":
-            completion_set = {value.isoformat() for value in completion_dates}
-            cursor = reference_date
-            streak = 0
-
-            while cursor.isoformat() in completion_set:
-                streak += 1
-                cursor -= timedelta(days=1)
-
-            return streak
-
-        completed_weeks = {self._week_key(item) for item in completion_dates}
-        cursor = reference_date
-        streak = 0
-
-        while self._week_key(cursor) in completed_weeks:
-            streak += 1
-            cursor -= timedelta(days=7)
-
-        return streak
-
-    def _is_complete_for_reference(self, habit: Habit, reference_date: date) -> bool:
-        completion_dates = [self._parse_date(value) for value in set(habit.completions)]
-        if habit.frequency == "daily":
-            return reference_date in completion_dates
-
-        reference_key = self._week_key(reference_date)
-        return any(self._week_key(item) == reference_key for item in completion_dates)
+        return int(late_delta.total_seconds() // 60)
 
     @staticmethod
-    def _current_period_label(frequency: str, reference_date: date) -> str:
-        if frequency == "weekly":
-            iso_year, iso_week, _ = reference_date.isocalendar()
-            return f"Week {iso_week}, {iso_year}"
-        return reference_date.isoformat()
+    def _timing_status(appointment: Appointment, reference_time: datetime) -> str:
+        scheduled_time = datetime.fromisoformat(appointment.scheduled_at)
+        delta_minutes = int((reference_time - scheduled_time).total_seconds() // 60)
+
+        if delta_minutes < 0:
+            return f"Starts in {abs(delta_minutes)} minutes"
+        if delta_minutes < LATE_THRESHOLD_MINUTES:
+            return f"{delta_minutes} minutes into the grace period"
+        return f"{delta_minutes} minutes late"
 
     @staticmethod
-    def _parse_date(value: str) -> date:
-        return date.fromisoformat(value)
+    def _status_label(status: str) -> str:
+        return {
+            "scheduled": "Scheduled",
+            "follow_up_sent": "Follow-up sent",
+            "rescheduled": "Rescheduled",
+        }.get(status, status.replace("_", " ").title())
 
     @staticmethod
-    def _week_key(value: date) -> tuple[int, int]:
-        iso_year, iso_week, _ = value.isocalendar()
-        return iso_year, iso_week
+    def _parse_datetime(value: str) -> datetime:
+        return datetime.fromisoformat(str(value))
+
+    @staticmethod
+    def _format_datetime(value: datetime) -> str:
+        return value.strftime("%b %d, %Y at %I:%M %p")
+
+    @staticmethod
+    def _timestamp_label(value: datetime) -> str:
+        return value.isoformat(timespec="minutes")
+
+    @staticmethod
+    def _now() -> datetime:
+        return datetime.now(UTC).astimezone().replace(second=0, microsecond=0, tzinfo=None)

@@ -1,6 +1,6 @@
-# Claude Setup for HabitFlow
+# Claude Setup for RecallFlow
 
-This folder contains the Claude Code files that sit beside the HabitFlow project.
+This folder contains the Claude Code files that sit beside the RecallFlow project.
 
 ## What is in this folder
 
@@ -18,12 +18,12 @@ Use one of these two Claude MCP paths:
 
 The repo also keeps `config-examples/claude-project.mcp.json` as a copy-friendly global template.
 
-## Servers used for HabitFlow
+## Servers used for RecallFlow
 
 All three tool setups in this repo are aligned on the same MCP trio:
 
-- Context7 for current library and framework docs while building HabitFlow
-- NotebookLM for assignment notes or outside research after Node.js is installed
+- Context7 for current library and framework docs while building the missed-appointment workflow
+- NotebookLM for assignment notes, outreach scripts, or operating procedures after Node.js is installed
 - Playwright for local browser checks against `http://127.0.0.1:8000`
 
 ## Quick start
@@ -44,7 +44,7 @@ bash ./.claude/install-skills.sh
 
 ## Skill order for this project
 
-Use the skills in this order when working on HabitFlow:
+Use the skills in this order when working on RecallFlow:
 
 1. `/grill-me`
 2. `/write-a-prd`
@@ -56,4 +56,4 @@ Use the skills in this order when working on HabitFlow:
 
 - `.env.example` shows the environment variables used by the MCP setup and other local tooling.
 - The repo root `.mcp.json` is the file Claude Code should read for project-scoped MCP servers.
-- VS Code and Codex use their own aligned configs in `.vscode/mcp.json` and `config-examples/codex-config.toml`.
+- The local web app simulates MCP-triggered call and text follow-up instead of sending real telecom traffic.

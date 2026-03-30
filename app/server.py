@@ -10,24 +10,24 @@ from urllib.parse import parse_qs
 from wsgiref.simple_server import make_server
 
 from .data_store import JsonFileStore
-from .service import HabitService
+from .service import AppointmentService
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = BASE_DIR / "app" / "static"
-DATA_FILE = BASE_DIR / "data" / "habits.json"
+DATA_FILE = BASE_DIR / "data" / "appointments.json"
 
 StartResponse = Callable[[str, list[tuple[str, str]]], None]
 
 
-def create_app(service: HabitService | None = None) -> Callable[[dict, StartResponse], Iterable[bytes]]:
-    habit_service = service or HabitService(JsonFileStore(DATA_FILE))
+def create_app(service: AppointmentService | None = None) -> Callable[[dict, StartResponse], Iterable[bytes]]:
+    appointment_service = service or AppointmentService(JsonFileStore(DATA_FILE))
 
     def app(environ: dict, start_response: StartResponse) -> Iterable[bytes]:
         method = environ.get("REQUEST_METHOD", "GET")
         path = environ.get("PATH_INFO", "/")
 
         if path.startswith("/api/"):
-            return _handle_api(habit_service, environ, start_response, method, path)
+            return _handle_api(appointment_service, environ, start_response, method, path)
 
         return _serve_static(start_response, path)
 
@@ -35,7 +35,7 @@ def create_app(service: HabitService | None = None) -> Callable[[dict, StartResp
 
 
 def _handle_api(
-    service: HabitService,
+    service: AppointmentService,
     environ: dict,
     start_response: StartResponse,
     method: str,
@@ -47,28 +47,45 @@ def _handle_api(
 
         if method == "GET" and path == "/api/dashboard":
             params = parse_qs(environ.get("QUERY_STRING", ""))
-            reference_date = params.get("date", [None])[0]
-            return _json_response(start_response, 200, service.dashboard(reference_date))
+            reference_time = params.get("time", [None])[0]
+            return _json_response(start_response, 200, service.dashboard(reference_time))
 
-        if method == "GET" and path == "/api/habits":
+        if method == "GET" and path == "/api/appointments":
             params = parse_qs(environ.get("QUERY_STRING", ""))
-            reference_date = params.get("date", [None])[0]
-            return _json_response(start_response, 200, {"habits": service.list_habits(reference_date)})
+            reference_time = params.get("time", [None])[0]
+            return _json_response(start_response, 200, {"appointments": service.list_appointments(reference_time)})
 
-        if method == "POST" and path == "/api/habits":
+        if method == "POST" and path == "/api/appointments":
             payload = _read_json_body(environ)
-            habit = service.create_habit(
-                name=str(payload.get("name", "")),
-                description=str(payload.get("description", "")),
-                frequency=str(payload.get("frequency", "daily")),
+            appointment = service.create_appointment(
+                customer_name=str(payload.get("customer_name", "")),
+                phone_number=str(payload.get("phone_number", "")),
+                appointment_type=str(payload.get("appointment_type", "")),
+                scheduled_at=str(payload.get("scheduled_at", "")),
+                preferred_channel=str(payload.get("preferred_channel", "text")),
+                notes=str(payload.get("notes", "")),
             )
-            return _json_response(start_response, 201, habit)
+            return _json_response(start_response, 201, appointment)
 
-        if method == "POST" and path.startswith("/api/habits/") and path.endswith("/complete"):
-            habit_id = path.removeprefix("/api/habits/").removesuffix("/complete").strip("/")
+        if method == "POST" and path.startswith("/api/appointments/") and path.endswith("/follow-up"):
+            appointment_id = path.removeprefix("/api/appointments/").removesuffix("/follow-up").strip("/")
             payload = _read_json_body(environ)
-            habit = service.complete_habit(habit_id, payload.get("date"))
-            return _json_response(start_response, 200, habit)
+            appointment = service.send_follow_up(
+                appointment_id,
+                channel=str(payload.get("channel", "")),
+                reference_time=str(payload.get("reference_time", "")) or None,
+            )
+            return _json_response(start_response, 200, appointment)
+
+        if method == "POST" and path.startswith("/api/appointments/") and path.endswith("/reschedule"):
+            appointment_id = path.removeprefix("/api/appointments/").removesuffix("/reschedule").strip("/")
+            payload = _read_json_body(environ)
+            appointment = service.reschedule_appointment(
+                appointment_id,
+                new_scheduled_at=str(payload.get("new_scheduled_at", "")),
+                reference_time=str(payload.get("reference_time", "")) or None,
+            )
+            return _json_response(start_response, 200, appointment)
 
         return _json_response(start_response, 404, {"error": "Not found"})
     except ValueError as error:
@@ -128,11 +145,11 @@ def _status_text(status_code: int) -> str:
 
 
 def main() -> None:
-    host = os.environ.get("HABITFLOW_HOST", "127.0.0.1")
-    port = int(os.environ.get("HABITFLOW_PORT", "8000"))
+    host = os.environ.get("RECALLFLOW_HOST", "127.0.0.1")
+    port = int(os.environ.get("RECALLFLOW_PORT", "8000"))
 
     with make_server(host, port, create_app()) as server:
-        print(f"HabitFlow running at http://{host}:{port}")
+        print(f"RecallFlow running at http://{host}:{port}")
         server.serve_forever()
 
 

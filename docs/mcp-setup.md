@@ -1,6 +1,6 @@
 # MCP Setup Notes
 
-This repo now keeps the HabitFlow MCP story aligned across Codex, Claude Code, and VS Code.
+This repo now keeps the RecallFlow MCP story aligned across Codex, Claude Code, and VS Code.
 
 ## Verified machine status on 2026-03-29
 
@@ -28,11 +28,15 @@ All three clients point at the same MCP trio:
 - NotebookLM through `npx` once Node.js is installed
 - Playwright through `npx` in headless mode for local UI checks
 
-## HabitFlow use cases
+## RecallFlow use cases
 
-- Context7: pull up-to-date docs while changing the Python app or frontend
-- NotebookLM: query assignment notes and outside references
-- Playwright: verify the local HabitFlow UI at `http://127.0.0.1:8000`
+- Context7: pull up-to-date docs while changing the late-appointment workflow
+- NotebookLM: query assignment notes, outreach language, or operating procedures
+- Playwright: verify the local RecallFlow UI at `http://127.0.0.1:8000`
+
+## Scope note
+
+The local app simulates MCP-triggered call and text follow-up inside the dashboard. Real telecom delivery is intentionally out of scope for this assignment proof of concept.
 
 ## Target paths used on this machine
 
@@ -65,4 +69,4 @@ NotebookLM and Playwright are configured through `npx`. The config is ready, but
 - Show `.mcp.json`.
 - Show `.claude/README.md`.
 - Show `.vscode/mcp.json`.
-- Demonstrate Context7, NotebookLM, and Playwright against HabitFlow after Node.js is installed.
+- Demonstrate Context7, NotebookLM, and Playwright against RecallFlow after Node.js is installed.
